@@ -1,16 +1,18 @@
 <?php
-header("Content-type:application/json");
+header('Content-type:application/json');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
-
-    $reFirstName = '/^[A-ZŠĐČĆŽ][a-zšđžčć]{3,15}(\s[A-ZČŠĐĆŽ][a-zčćšđž]{3,15})?$/';
+    $id = $_POST['id'];
+    $reFirstLastName = '/^[A-ZŠĐČĆŽ][a-zšđžčć]{3,15}(\s[A-ZČŠĐĆŽ][a-zčćšđž]{3,15})?$/';
     $errors = [];
-    if (!preg_match($reFirstName, $first_name)) {
-        $errors[] = "First name of user isn't ok";
+
+    if (!preg_match($reFirstLastName, $first_name)) {
+        $errors[] = "First name of user isnt'ok";
     }
-    if (!preg_match($reFirstName, $last_name)) {
-        $errors[] = "Last name of user isnt' ok";
+
+    if (!preg_match($reFirstLastName, $last_name)) {
+        $errors[] = "Last name of user isn't ok";
     }
 
     if (count($errors) > 0) {
@@ -22,11 +24,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
             require_once '../../config/connection.php';
             require '../function.php';
-            insertAuthor($first_name, $last_name);
-            echo json_encode("Author is created");
-            http_response_code(201);
+
+            updateAuthor($first_name, $last_name, $id);
+            $author = getAuthor($id);
+            echo json_encode($author);
         } catch (PDOException $th) {
-            echo json_encode($th->getMessage());
+            echo $th->getMessage();
             http_response_code(500);
         }
     }
