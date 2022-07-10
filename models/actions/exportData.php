@@ -20,5 +20,12 @@ if (isset($_GET['type'])) {
         }
         exit();
     } else {
+        $timestamp =  time();
+        $filename = 'nemanja' . $timestamp . '.doc';
+        header("Content-type: application/vnd.ms-word");
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        echo "Nemanja Jovicic";
+        echo "Web developer";
+        exit();
     }
 }
