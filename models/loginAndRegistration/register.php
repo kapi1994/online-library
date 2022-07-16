@@ -1,6 +1,6 @@
 <?php
-// # teistirati
-// -- proveriti sa profanom
+
+
 session_start();
 header("Content-type:application/json");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -44,17 +44,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo json_encode("That email is already taken");
                 http_response_code(409);
             } else {
-                define('ROLE', 2);
+                define('ROLE', 1);
                 $userInsert =  insertUser($first_name, $last_name, $email, $password, ROLE);
-
-                $user = login($email, $password);
-                $_SESSION['user'] = $user;
-                echo json_encode($user);
-
-                insertUserActivity($email, "Registration");
+                $id = $connection->lastInsertId();
+                insertUserActivity($id, "register");
+                echo json_encode('registration');
+                http_response_code(201);
             }
         } catch (PDOException $th) {
-            echo json_encode($th->getMessage());
+            echo json_encode("Something went wrong");
             http_response_code(500);
         }
     }
