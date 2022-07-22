@@ -6,9 +6,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         require_once '../../config/connection.php';
         include '../function.php';
-        changeStatusBook($id, $status);
-        $book = getFullRow('book', 'id', $id);
-        echo json_encode($book);
+        $checkAuthorIsDeleted = queryCheckAuthorIsDeleted($id);
+        if ($checkAuthorIsDeleted->is_deleted == 1) {
+            echo json_encode("You can't enable this book beacuse author(authors) is(are) dissabled");
+            http_response_code(500);
+        } else {
+            changeStatusBook($id, $status);
+            $book = getFullRow('book', 'id', $id);
+            echo json_encode($book);
+        }
     } catch (PDOException  $th) {
         echo json_encode($th->getMessage());
         http_response_code(500);
